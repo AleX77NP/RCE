@@ -22,6 +22,7 @@ func (svc *RemoteService) SetSettings(lang, code string) {
 }
 
 // File name to be dynamic based on lang
+// create new file for every run?
 func (svc *RemoteService) RunCode() (error, string) {
 	executor := exec.NewExecutor(svc.lang, svc.code, "code/code.py", "/Users/aleksandar77np/Desktop/rce/backend/code")
 	return executor.ExecuteCode();
