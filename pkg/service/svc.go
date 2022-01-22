@@ -33,13 +33,14 @@ func (svc *RemoteService) RunCode(code string) (error, string) {
 		panic(err)
 	}
 	fileName := "code/" + f
-	executor := exec.NewExecutor(svc.lang, svc.code, fileName, "/Users/aleksandar77np/Desktop/rce/backend/code")
+	codePath := getCodeDir() + "/code"
+	executor := exec.NewExecutor(svc.lang, svc.code, fileName, codePath)
 	return executor.ExecuteCode()
 }
 
 // Dynamic for each user should it be !
 func (svc *RemoteService) createFileAndAddCode(user string, code string) (string, error) {
-	fName := "/Users/aleksandar77np/Desktop/rce/backend/code/" + user + getExtension("python")
+	fName := getCodeDir() + "/code/" + user + getExtension("python")
 	file, err := os.Create(fName)
 	defer file.Close()
 	if err != nil {
@@ -63,4 +64,9 @@ func (svc *RemoteService) RemoveFile() {
 // make this dynamic for other language
 func getExtension(lang string) string {
 	return ".py"
+}
+
+// change this 
+func getCodeDir() string {
+	return "/Users/aleksandar77np/Desktop/rce/backend"
 }
