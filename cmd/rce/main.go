@@ -14,6 +14,7 @@ var (
 	service = rs.NewRemoteService("", "")
 )
 
+// Create api that writes code from request to the code/ folder for different languages
 func handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Processing request...")
 	// Make this dynamic - send code from request
