@@ -1,18 +1,23 @@
 package service
 
 import (
+	"log"
+	"os"
+
 	exec "rce.amopdev/m/v2/pkg/executor"
 )
 
 type RemoteService struct {
 	lang string
 	code string
+	file string
 }
 
 func NewRemoteService(lang, code string) *RemoteService {
 	return &RemoteService{
-		lang,
-		code,
+		lang: lang,
+		code: code,
+		file: "",
 	}
 }
 
@@ -22,8 +27,39 @@ func (svc *RemoteService) SetSettings(lang, code string) {
 }
 
 // File name to be dynamic based on lang
-// create new file for every run?
-func (svc *RemoteService) RunCode() (error, string) {
-	executor := exec.NewExecutor(svc.lang, svc.code, "code/code.py", "/Users/aleksandar77np/Desktop/rce/backend/code")
+func (svc *RemoteService) RunCode(code string) (error, string) {
+	f, err := svc.createFileAndAddCode("aco", code)
+	if err != nil {
+		panic(err)
+	}
+	fileName := "code/" + f
+	executor := exec.NewExecutor(svc.lang, svc.code, fileName, "/Users/aleksandar77np/Desktop/rce/backend/code")
 	return executor.ExecuteCode();
+}
+
+func (svc *RemoteService) createFileAndAddCode(user string, code string) (string,error) {
+	fName := "/Users/aleksandar77np/Desktop/rce/backend/code/" + user + getExtension("python")
+	file, err := os.Create(fName)
+	defer file.Close()
+	if err != nil {
+		return "", err
+	}
+	_, err2 := file.WriteString(code)
+	if err2 != nil {
+		return "", err2
+	}
+	svc.file = fName
+	return user + getExtension("python"), err
+}
+
+func (svc *RemoteService) RemoveFile() {
+	err := os.Remove(svc.file)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+// make this dynamic for other language
+func getExtension(lang string) string {
+	return ".py"
 }

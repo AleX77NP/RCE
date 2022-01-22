@@ -3,9 +3,11 @@ package dockerclient
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"os"
+	"strings"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
@@ -67,6 +69,8 @@ func (dockerClient *DockerClient) RunContainer() (error, string) {
 
 	dockerClient.ID = resp.ID
 
+	defer cli.ContainerRemove(ctx, dockerClient.ID, types.ContainerRemoveOptions{})
+
 	fmt.Printf("Start Container...")
     if err := cli.ContainerStart(ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
 		return err, err.Error()
@@ -81,7 +85,8 @@ func (dockerClient *DockerClient) RunContainer() (error, string) {
     case <-statusCh:
     }
 
-    out, err := cli.ContainerLogs(ctx, resp.ID, types.ContainerLogsOptions{ShowStdout: true})
+	fmt.Printf("Container Logs..")
+    out, err := cli.ContainerLogs(ctx, resp.ID, types.ContainerLogsOptions{ShowStdout: true, ShowStderr: true})
     if err != nil {
         return err, err.Error()
     }
@@ -90,7 +95,9 @@ func (dockerClient *DockerClient) RunContainer() (error, string) {
 
 	stdcopy.StdCopy(os.Stdout, os.Stderr, out)
 
-	// remove container here using ID
+	if (strings.Contains(strings.ToLower(r), "error")) {
+		return errors.New(r), r
+	}
 
 	return nil, r
 }

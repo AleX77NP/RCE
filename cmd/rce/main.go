@@ -1,13 +1,14 @@
 package main
 
 import (
-    "fmt"
-    "log"
-    "net/http"
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+
 	rs "rce.amopdev/m/v2/pkg/service"
 	reg "rce.amopdev/m/v2/util/regex"
-
 )
 
 var (
@@ -17,9 +18,16 @@ var (
 // Create api that writes code from request to the code/ folder for different languages
 func handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Processing request...")
-	// Make this dynamic - send code from request
+	// Read request body
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+	code := string(body)
+
 	service.SetSettings("python", "")
-    err, resp := service.RunCode()
+    err, resp := service.RunCode(code)
+	service.RemoveFile()
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 	}

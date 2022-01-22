@@ -20,7 +20,6 @@ func NewExecutor(language, code, file, hostDir string) *Executor {
 
 func (executor *Executor) ExecuteCode() (error, string) {
 	return executor.client.RunContainer()
-	
 }
 
 // Make this things dynamic
