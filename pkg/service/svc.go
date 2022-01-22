@@ -37,6 +37,7 @@ func (svc *RemoteService) RunCode(code string) (error, string) {
 	return executor.ExecuteCode();
 }
 
+// Dynamic for each user should it be !
 func (svc *RemoteService) createFileAndAddCode(user string, code string) (string,error) {
 	fName := "/Users/aleksandar77np/Desktop/rce/backend/code/" + user + getExtension("python")
 	file, err := os.Create(fName)
