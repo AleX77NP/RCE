@@ -22,7 +22,7 @@ func (executor *Executor) ExecuteCode() (error, string) {
 	return executor.client.RunContainer()
 }
 
-// Make this things dynamic
+// Make these things dynamic
 func selectImage(language string) string{
 	return "docker.io/library/python"
 }

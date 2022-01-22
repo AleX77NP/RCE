@@ -61,7 +61,7 @@ func (svc *RemoteService) RemoveFile() {
 	}
 }
 
-// make these dynamic for other language
+// make this dynamic for other language
 func getExtension(lang string) string {
 	return ".py"
 }
